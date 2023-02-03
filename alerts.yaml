@@ -51,11 +51,10 @@ groups:
 - name: CPU-load
   rules:
   - alert: HighNodeCPU
-    expr: node_load15 / count by (instance, job) (node_cpu_seconds_total{mode="idle"}) >=2
+    expr: rate(node_load15[5m])*100 > 60
     for : 5m
     labels:
       severity: warning
     annotations:
       summary: "High CPU load (instance {{ $labels.instance }})"
       description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-      
