@@ -1,4 +1,4 @@
-groups:
+vgroups:
 
 - name: Cpu-usage
   rules:
