@@ -35,8 +35,10 @@ scrape_configs:
       match[]:
         - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
     static_configs:
-     - targets: ['alpha-prod-prometheus-2-17.0383898a.lowtouch.cloud:443','alpha-prod2-prometheus-2-17.0383898a.lowtouch.cloud:443']
-
+     - targets: 
+       - 'alpha-prod-prometheus-2-17.0383898a.lowtouch.cloud:443'
+       - 'alpha-prod2-prometheus-2-17.0383898a.lowtouch.cloud:443'
+       - 'alpha-dev2-prometheus-2-17.0383898a.lowtouch.cloud:443'
   - job_name: 'node-exporter'
     static_configs:
     - targets: ['172.31.38.133:9100','172.31.42.93:9100','172.31.41.23:9100','172.31.39.107:9100','192.168.110.131:9100','192.168.133.77:9100','192.168.119.28:9100','192.168.143.65:9100','198.19.103.34:9100','198.19.139.205:9100']
