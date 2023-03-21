@@ -21,10 +21,7 @@ volumes:
   - claim: prometheus-data
     mount: /appz/data
     name: data
-    size: 50Gi
-    matchLabels: false
-    
+    size: 50Gi  
   
 properties:
-    revision : 91
-    
+    revision : 11
