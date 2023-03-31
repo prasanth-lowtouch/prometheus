@@ -3,7 +3,7 @@ groups:
 - name: Cpu-usage
   rules:
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 95
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 50
     for: 3m
     labels:
       severity: warning
@@ -14,7 +14,7 @@ groups:
 - name: Disk-usage
   rules:
   - alert: 'Low data disk space'
-    expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 95
+    expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 70
     labels:
       severity: 'critical'
     annotations:
@@ -51,8 +51,8 @@ groups:
 - name: CPU-load
   rules:
   - alert: HighNodeCPU
-    expr: rate(node_load15[5m])*100 > 70
-    for : 5m
+    expr: rate(node_load15[5m])*100 > 50
+    for : 3m
     labels:
       severity: warning
     annotations:
@@ -63,8 +63,8 @@ groups:
 - name: High-Pod-CPU
   rules:
   - alert: HighPodCPU
-    expr: avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod,namespace  )  > 90
-    for: 15m
+    expr: avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod,namespace  )  > 40
+    for: 5m
     labels:
       severity: warning
     annotations:
