@@ -69,4 +69,26 @@ groups:
       severity: warning
     annotations:
       summary: HighCpuUsage
-      description: "Pod cpu average value : {{ $value | printf \"%.2f\" }}"      
+      description: "Pod cpu average value : {{ $value | printf \"%.2f\" }}"
+      
+- name: site-down
+  rules:
+  - alert: SiteDown
+    expr: probe_success == 0
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Site {{ $labels.instance }} down"
+      description: "HTTP probe fail"
+
+- name: status-other-than-200
+  rules:
+  - alert: http-200-fail
+    expr: probe_http_status_code != 200
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "HTTP 200 Fail"
+      description: "HTTP status code other than \"200\" has been returned\n HTTP STATUS {{ $value }}"
