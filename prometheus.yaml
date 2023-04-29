@@ -36,6 +36,7 @@ scrape_configs:
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       
     - job_name: 'redis'
+    
       kubernetes_sd_configs:
       - role: endpoints
     
