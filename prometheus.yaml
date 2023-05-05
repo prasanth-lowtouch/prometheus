@@ -35,9 +35,9 @@ scrape_configs:
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       
-   - job_name: 'redis'
+  - job_name: 'redis'
     
-     kubernetes_sd_configs:
+    kubernetes_sd_configs:
       - role: endpoints
     
     relabel_configs:
