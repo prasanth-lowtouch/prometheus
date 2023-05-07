@@ -104,7 +104,7 @@ scrape_configs:
     - targets:
        - https://app.apexaiq.com/api/v1/health/ping/
        - https://eu.apexaiq.com/api/v1/health/ping/
-       - https://az.apexaiq.com/ 
+       - https://az.apexaiq.com/api/v1/health/ping/
        - https://docs.apexaiq.com/
        
     relabel_configs:
