@@ -106,6 +106,7 @@ scrape_configs:
        - https://eu.apexaiq.com/api/v1/health/ping/
        - https://az.apexaiq.com/api/v1/health/ping/
        - https://docs.apexaiq.com/
+       - https://az-staging.apexaiq.com/api/v1/health/ping/
        
     relabel_configs:
       - source_labels: [__address__]
