@@ -34,21 +34,10 @@ scrape_configs:
         target_label: nodename
         replacement: appz-${1}
       - source_labels: ['nodename']
-        regex: 'k8s.(.*)'
+        regex: 'k8s.worker.node.(.*)'
         target_label: nodename
-        replacement: appz-${1}
-      - source_labels: ['nodename']
-        regex: 'ip-192-168-103-189.us-east-2.compute.internal'
-        target_label: nodename
-        replacement: appz-qa-worker-1
-      - source_labels: ['nodename']
-        regex: 'ip-192-168-163-143.us-east-2.compute.internal'
-        target_label: nodename
-        replacement: appz-qa-worker-2
-      - source_labels: ['nodename']
-        regex: 'ip-192-168-130-193.us-east-2.compute.internal'
-        target_label: nodename
-        replacement: appz-prod-worker-1 
+        replacement: appz-dev-worker-${1}
+
   - job_name: 'kube-state-metrics'
     static_configs:
     - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
