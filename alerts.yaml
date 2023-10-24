@@ -63,13 +63,19 @@ groups:
 - name: High-Pod-CPU
   rules:
   - alert: HighPodCPU
-    expr: avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod,namespace  )  > 90
+    expr: |
+      avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod, namespace) > on(pod) group_left(app_name) 90 unless on(pod) group_right(app_name) 150
     for: 10m
     labels:
       severity: warning
     annotations:
       summary: HighCpuUsage
-      description: "Pod cpu average value : {{ $value | printf \"%.2f\" }}"
+      description: |
+        {{- if eq .app_name "eol-vectorization-3-3" -}}
+        "eol-vectorization-3-3 pod CPU usage is high: {{ $value | printf \"%.2f\" }}"
+        {{- else -}}
+        "CPU usage is high for {{ .pod }} in {{ .namespace }}: {{ $value | printf \"%.2f\" }}"
+        {{- end -}}
       
 - name: site-down
   rules:
