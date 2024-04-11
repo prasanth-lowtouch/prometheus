@@ -35,12 +35,12 @@ scrape_configs:
     metric_relabel_configs:
       - source_labels:
           - nodename
-        regex: (qa.master)
+        regex: '(qa.master)'
         target_label: nodename
         replacement: appz-${1}
       - source_labels:
           - nodename
-        regex: qa.worker.node.(.*)
+        regex: 'qa.worker.node.(.*)'
         target_label: nodename
         replacement: appz-${1}
   - job_name: kube-state-metrics
