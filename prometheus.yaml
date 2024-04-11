@@ -29,22 +29,18 @@ scrape_configs:
     static_configs:
     - targets: ['172.31.20.210:9100','172.31.48.127:9100','172.31.62.118:9100',]
     metric_relabel_configs:
-      - source_labels:
-          - nodename
+      - source_labels: ['nodename']
         regex: '(qa.master)'
         source_labels: ['nodename']
         target_label: nodename
         replacement: appz-${1}
-      - source_labels:
-          - nodename
+      - source_labels: ['nodename']
         regex: 'qa.worker.node.(.*)'
-        source_labels: ['nodename']
         target_label: nodename
         replacement: appz-${1}
   - job_name: kube-state-metrics
     static_configs:
-      - targets:
-          - kube-state-metrics.kube-system.svc.cluster.local:8080
+    - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
   - job_name: kubernetes-cadvisor
     scheme: https
     tls_config:
