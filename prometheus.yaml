@@ -40,7 +40,7 @@ scrape_configs:
         replacement: appz-${1}
       - source_labels:
           - nodename
-        regex: k8s.(.*)
+        regex: qa-worker-node.(.*)
         target_label: nodename
         replacement: appz-${1}
   - job_name: kube-state-metrics
