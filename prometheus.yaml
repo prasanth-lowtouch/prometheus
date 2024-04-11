@@ -31,7 +31,6 @@ scrape_configs:
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
-        source_labels: ['nodename']
         target_label: nodename
         replacement: appz-${1}
       - source_labels: ['nodename']
