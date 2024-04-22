@@ -25,5 +25,5 @@ volumes:
     size: 50Gi
   
 properties:
-    revision: 9
+    revision: 10
     #TARGET : graylog-5-2:9833
