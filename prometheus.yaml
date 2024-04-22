@@ -23,9 +23,9 @@ scrape_configs:
       username: admin
       password: 12SRS199512PPJ
     static_configs:
-      - targets: ['sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud/']
+    - targets: ['sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud/']
     #static_configs:
-   # - targets:
+    #- targets:
     #    - graylog-5-2:9000
   - job_name: 'node-exporter'
     static_configs:
