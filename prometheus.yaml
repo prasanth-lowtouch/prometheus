@@ -21,10 +21,10 @@ scrape_configs:
     metrics_path: /api/plugins/org.graylog.plugins.metrics.prometheus/metrics
     basic_auth:
       username: admin
-      password: 4FTZOx9ACdbAw65WJH1u
+      password: 12SRS199512PPJ
     static_configs:
     - targets:
-        - appz-logcollectorgl-3-1:9000
+        - graylog-5-2:9000
   - job_name: 'node-exporter'
     static_configs:
     - targets: ['172.31.20.210:9100','172.31.48.127:9100','172.31.62.118:9100','172.31.51.187:9100']
