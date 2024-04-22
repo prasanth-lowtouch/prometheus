@@ -26,4 +26,4 @@ volumes:
   
 properties:
     revision: 9
-    TARGET : graylog-5-2:9833
+    #TARGET : graylog-5-2:9833
