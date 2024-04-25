@@ -26,7 +26,14 @@ scrape_configs:
     #- targets: ['sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud']
     #static_configs:
     #- targets: ['graylog-5-2.sranjan1995-dev:9833']
-  
+  - job_name: 'graylog'
+    static_configs:
+            - targets: ['10.152.183.31:9833']
+
+  - job_name: 'opensearch'
+    static_configs:
+            - targets: ['10.152.183.185:9200']
+    metrics_path: '/_prometheus/metrics'
   - job_name: 'node-exporter'
     static_configs:
     - targets: ['172.31.20.210:9100','172.31.48.127:9100','172.31.62.118:9100','172.31.51.187:9100']
