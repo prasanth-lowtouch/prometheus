@@ -28,11 +28,11 @@ scrape_configs:
     #- targets: ['graylog-5-2.sranjan1995-dev:9833']
   - job_name: 'graylog'
     static_configs:
-            - targets: ['10.152.183.31:9833']
+            - targets: ['10.152.183.40:9833']
 
   - job_name: 'opensearch'
     static_configs:
-            - targets: ['10.152.183.185:9200']
+            - targets: ['10.152.183.47:9200']
     metrics_path: '/_prometheus/metrics'
   - job_name: 'node-exporter'
     static_configs:
