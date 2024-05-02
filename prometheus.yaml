@@ -1,4 +1,3 @@
-
 # my global config
 global:
   scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
@@ -24,7 +23,7 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
     - targets: ['localhost:9090']
-  
+ 
   - job_name: 'node-exporter'
     static_configs:
     - targets: ['172.31.16.217:9100','172.31.34.185:9100']
@@ -34,10 +33,10 @@ scrape_configs:
         target_label: nodename
         replacement: appz-${1}
       - source_labels: ['nodename']
-        regex: 'k8s.worker.node.(.*)'
+        regex: 'k8s.(.*)'
         target_label: nodename
-        replacement: appz-dev-worker-${1}
-  
+        replacement: appz-${1}
+      
   - job_name: 'kube-state-metrics'
     static_configs:
     - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
@@ -58,3 +57,50 @@ scrape_configs:
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+      
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+     module: [http_2xx] 
+    static_configs:
+    - targets:
+       - 10.20.6.61:32429
+       - 10.20.7.116:32429
+       - 10.20.8.63:32429
+       - https://mobileapi.ksfe.com/health/status
+       - https://mobileapi.ksfe.com/health/dbstatus
+       
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-0-2:9115      
+      
+  - job_name: 'mongodb_exporter'
+    kubernetes_sd_configs:
+    - role: endpoints
+    
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: pod
+
+    - source_labels: [pod]
+      regex: '((.*)mongodb(.*))'
+      action: keep   
+
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[27017]+)?'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'AppZ${1}'
