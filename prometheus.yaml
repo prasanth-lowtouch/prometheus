@@ -1,8 +1,10 @@
 # my global config
 global:
-  scrape_interval: 15s  # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s  # Evaluate rules every 15 seconds. The default is every 1 minute.
-
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+  external_labels:
+    datacenter: primary
 # Alertmanager configuration
 alerting:
   alertmanagers:
@@ -23,9 +25,23 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
  
+  - job_name: 'federation'
+    scrape_interval: 20s
+    scrape_timeout: 20s
+    scheme: https
+    metrics_path: /federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
+    static_configs:
+      - targets : 
+        - 'alpha-prod-prometheus-2-17.0383898a.lowtouch.cloud:443'
+        - 'alpha-dev2-prometheus-2-17.0383898a.lowtouch.cloud:443'
+        - 'alpha-prod2-prometheus-2-17.0383898a.lowtouch.cloud:443'
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['172.31.16.217:9100','172.31.34.185:9100']
+    - targets: ['172.31.38.133:9100','172.31.42.93:9100','172.31.41.23:9100','172.31.39.107:9100','192.168.110.131:9100','192.168.133.77:9100','192.168.119.28:9100','192.168.143.65:9100','198.19.103.34:9100','198.19.139.205:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -35,7 +51,30 @@ scrape_configs:
         regex: 'k8s.(.*)'
         target_label: nodename
         replacement: appz-${1}
-      
+      - source_labels: ['nodename']
+        regex: 'ip-192-168-110-131.us-east-2.compute.internal'
+        target_label: nodename
+        replacement: appz-prod-worker-1
+      - source_labels: ['nodename']
+        regex: 'ip-192-168-133-77.us-east-2.compute.internal'
+        target_label: nodename
+        replacement: appz-prod-worker-2 
+      - source_labels: ['nodename']
+        regex: 'ip-192-168-119-28.eu-west-3.compute.internal'
+        target_label: nodename
+        replacement: appz-dev2-worker-1
+      - source_labels: ['nodename']
+        regex: 'ip-192-168-143-65.eu-west-3.compute.internal'
+        target_label: nodename
+        replacement: appz-dev2-worker-2
+      - source_labels: ['nodename']
+        regex: 'ip-198-19-103-34.eu-west-3.compute.internal'
+        target_label: nodename
+        replacement: appz-prod2-worker-1
+      - source_labels: ['nodename']
+        regex: 'ip-198-19-139-205.eu-west-3.compute.internal'
+        target_label: nodename
+        replacement: appz-prod2-worker-2        
   - job_name: 'kube-state-metrics'
     static_configs:
     - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
@@ -56,7 +95,54 @@ scrape_configs:
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-                
+      
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+     module: [http_2xx] 
+    static_configs:
+    - targets:
+       - https://app.apexaiq.com/api/v1/health/ping/
+       - https://eu.apexaiq.com/api/v1/health/ping/
+       - https://az.apexaiq.com/api/v1/health/ping/
+       - https://docs.apexaiq.com/
+       - https://az-staging.apexaiq.com/api/v1/health/ping/
+       
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter-0-2:9115      
+            
+  - job_name: 'redis'
+    kubernetes_sd_configs:
+    - role: endpoints
+    
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: pod
+
+    - source_labels: [pod]
+      regex: '((.*)redis(.*))'
+      action: keep   
+
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[6379]+)?'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'AppZ${1}'
+      
   - job_name: 'mongodb_exporter'
     kubernetes_sd_configs:
     - role: endpoints
@@ -83,3 +169,86 @@ scrape_configs:
       regex: '.*'
       target_label: instance
       replacement: 'AppZ${1}'
+      
+  - job_name: 'yace'
+    scrape_interval: 60s
+    static_configs:
+     - targets: ['yace-0-29:5000']
+ 
+  - job_name: 'rabbitmq_exporter'
+   
+    kubernetes_sd_configs:
+    - role: endpoints
+    
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      
+      action: replace
+      target_label: pod
+        
+    - source_labels: [pod]
+      regex: 'rabbitmq.*'
+      action: keep
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[3000]+)?'
+      #regex: '([^:]+)(:[80]+)?'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '(.*):80'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'Appz${1}'
+          
+  - job_name: 'nodejs'
+   
+    kubernetes_sd_configs:
+    - role: endpoints
+    
+    
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      
+      action: replace
+      target_label: pod
+
+        
+    - source_labels: [pod]
+      #regex: '((.*)hellonode(.*))'
+      #regex: '((.*)hellonode(.*))'|'kbfc(.*))'
+      regex: 'apexaiq.*|mdm.*'
+      action: keep
+
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[3000]+)?'
+      #regex: '([^:]+)(:[80]+)?'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '(.*):80'
+      replacement: '${1}'
+      action: drop
+      
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'Appz${1}'
+      
