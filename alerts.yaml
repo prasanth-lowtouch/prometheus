@@ -3,18 +3,19 @@ groups:
 - name: Cpu-usage
   rules:
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 90
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 95
     for: 3m
     labels:
       severity: warning
     annotations:
       summary: Host high CPU load (instance {{ $labels.instance }})
       description: "CPU load is > 95%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-      
+
+
 - name: Disk-usage
   rules:
   - alert: 'Low data disk space'
-    expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 90
+    expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 95
     labels:
       severity: 'critical'
     annotations:
@@ -46,55 +47,3 @@ groups:
       title: "Low Disk space"
       summary: Host out of disk space (instance {{ $labels.instance }})
       description: "Disk is getting full (< 10% left)\n  Available Space is only= {{ $value }} %\n  LABELS = {{ $labels }}"
-
-     
-- name: CPU-load
-  rules:
-  - alert: HighNodeCPU
-    expr: rate(node_load15[5m])*100 > 85
-    for : 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "High CPU load (instance {{ $labels.instance }})"
-      description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-      
-      
-- name: High-Pod-CPU
-  rules:
-  - alert: HighPodCPU
-    expr: |
-      avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod, namespace) > on(pod) group_left(app_name) 90 unless on(pod) group_right(app_name) 150
-    for: 10m
-    labels:
-      severity: warning
-    annotations:
-      summary: HighCpuUsage
-      description: |
-        {{- if eq .app_name "eol-vectorization-3-3" -}}
-        "eol-vectorization-3-3 pod CPU usage is high: {{ $value | printf \"%.2f\" }}"
-        {{- else -}}
-        "CPU usage is high for {{ .pod }} in {{ .namespace }}: {{ $value | printf \"%.2f\" }}"
-        {{- end -}}
-      
-- name: site-down
-  rules:
-  - alert: SiteDown
-    expr: probe_success == 0
-    for: 5m
-    labels:
-      severity: "critical"
-    annotations:
-      summary: "Site {{ $labels.instance }} down"
-      description: "HTTP probe fail"
-
-- name: status-other-than-200
-  rules:
-  - alert: http-200-fail
-    expr: probe_http_status_code != 200
-    for: 5m
-    labels:
-      severity: critical
-    annotations:
-      summary: "HTTP 200 Fail"
-      description: "HTTP status code other than \"200\" has been returned\n HTTP STATUS {{ $value }}"
