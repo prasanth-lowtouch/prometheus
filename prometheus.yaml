@@ -60,8 +60,8 @@ scrape_configs:
     metrics_path: /probe
     params:
      module: [http_2xx] 
-    static_configs:
-    - targets: ['https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud']
+    #static_configs:
+    #- targets: ['https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud']
        #- https://eu.apexaiq.com/api/v1/health/ping/
        #- https://az.apexaiq.com/api/v1/health/ping/
        #- https://docs.apexaiq.com/
