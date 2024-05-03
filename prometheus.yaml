@@ -61,12 +61,11 @@ scrape_configs:
     params:
      module: [http_2xx] 
     static_configs:
-    - targets: ['https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud']
+    - targets:
        #- https://eu.apexaiq.com/api/v1/health/ping/
        #- https://az.apexaiq.com/api/v1/health/ping/
        #- https://docs.apexaiq.com/
        #- https://az-staging.apexaiq.com/api/v1/health/ping/
-       
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
