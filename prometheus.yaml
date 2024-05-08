@@ -18,11 +18,11 @@ scrape_configs:
     - targets: ['localhost:9090']
   - job_name: 'graylog'
     static_configs:
-            - targets: ['10.152.183.200:9833']
+            - targets: ['10.152.183.166:9833']
 
   - job_name: 'opensearch'
     static_configs:
-            - targets: ['10.152.183.29:9200']
+            - targets: ['10.152.183.91:9200']
     metrics_path: '/_prometheus/metrics'
   - job_name: 'node-exporter'
     static_configs:
