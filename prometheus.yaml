@@ -16,17 +16,9 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
     - targets: ['localhost:9090']
-  - job_name: 'graylog'
+    - job_name: 'node-exporter'
     static_configs:
-            - targets: ['10.152.183.166:9833']
-
-  - job_name: 'opensearch'
-    static_configs:
-            - targets: ['10.152.183.91:9200']
-    metrics_path: '/_prometheus/metrics'
-  - job_name: 'node-exporter'
-    static_configs:
-    - targets: ['172.31.20.210:9100','172.31.48.127:9100','172.31.62.118:9100','172.31.51.187:9100']
+    - targets: ['10.0.1.21:9100','10.0.2.246:9100','10.0.2.181:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
@@ -56,25 +48,7 @@ scrape_configs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-  - job_name: 'blackbox'
-    metrics_path: /probe
-    params:
-     module: [http_2xx] 
-    static_configs:
-    - targets:
-       - https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud
-       #- https://eu.apexaiq.com/api/v1/health/ping/
-       #- https://az.apexaiq.com/api/v1/health/ping/
-       #- https://docs.apexaiq.com/
-       #- https://az-staging.apexaiq.com/api/v1/health/ping/
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: blackbox-exporter-0-2:9115 
-  - job_name: redis
+    - job_name: redis
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
