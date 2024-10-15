@@ -150,14 +150,14 @@ groups:
       summary: "High CPU usage detected"
       description: "Pod {{ $labels.pod_name }} in namespace {{ $labels.namespace }} is using > 80% CPU for the last 5 minutes."
 
-  - alert: HighMemoryUsage
-    expr: sum(container_memory_usage_bytes{namespace="alpha-dev"}) by (pod_name) > 500 * 1024 * 1024
-    for: 5m
-    labels:
-      severity: warning
-    annotations:
-      summary: "High Memory usage detected"
-      description: "Pod {{ $labels.pod_name }} in namespace {{ $labels.namespace }} is using > 500MB memory for the last 5 minutes."
+ # - alert: HighMemoryUsage
+  #  expr: sum(container_memory_usage_bytes{namespace="alpha-dev"}) by (pod_name) > 500 * 1024 * 1024
+   # for: 5m
+    #labels:
+     # severity: warning
+    #annotations:
+    #  summary: "High Memory usage detected"
+    #  description: "Pod {{ $labels.pod_name }} in namespace {{ $labels.namespace }} is using > 500MB memory for the last 5 minutes."
 
   - alert: HighCpuUsage
     expr: sum(rate(container_cpu_usage_seconds_total{namespace="sranjan1995-dev"}[5m])) by (pod_name) > 0.8
