@@ -14,7 +14,6 @@ deploy:
     context: alpha/DEV
     type: statefulset
     replicas: 1
-    resources: large
     port:
     - 9090
 
