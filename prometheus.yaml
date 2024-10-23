@@ -107,11 +107,12 @@ scrape_configs:
         target_label: instance
         replacement: AppZ${1}
 
-  - job_name: 'postgresql'
-    static_configs:
-      - targets: [' 10.1.198.50:9187']
-    metrics_path: /metrics
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
+ - job_name: 'postgresql'
+  static_configs:
+    - targets: ['10.1.198.50:9187']
+  metrics_path: /metrics
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: instance
+
 
