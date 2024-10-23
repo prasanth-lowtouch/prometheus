@@ -3,14 +3,17 @@ global:
   evaluation_interval: 15s
   external_labels:
     datacenter: primary
+
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
             - alert-manager-0-2:9093
+
 rule_files:
   - /opt/bitnami/prometheus/conf/rules.yaml
   - /opt/bitnami/prometheus/conf/alerts.yaml
+
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
@@ -27,7 +30,7 @@ scrape_configs:
 
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['10.0.8.68:9100','10.0.137.203:9100','10.0.141.234:9100']
+      - targets: ['10.0.8.68:9100', '10.0.137.203:9100', '10.0.141.234:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
@@ -38,11 +41,11 @@ scrape_configs:
         target_label: nodename
         replacement: appz-${1}
 
-  - job_name: kube-state-metrics
+  - job_name: 'kube-state-metrics'
     static_configs:
       - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
 
-  - job_name: kubernetes-cadvisor
+  - job_name: 'kubernetes-cadvisor'
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -67,10 +70,6 @@ scrape_configs:
     static_configs:
       - targets:
          - https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud
-         #- https://eu.apexaiq.com/api/v1/health/ping/
-         #- https://az.apexaiq.com/api/v1/health/ping/
-         #- https://docs.apexaiq.com/
-         #- https://az-staging.apexaiq.com/api/v1/health/ping/
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -79,7 +78,7 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter-0-2:9115 
 
-  - job_name: redis
+  - job_name: 'redis'
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
@@ -107,12 +106,9 @@ scrape_configs:
         target_label: instance
         replacement: AppZ${1}
 
- - job_name: 'postgresql'
-  static_configs:
-    - targets: ['10.1.198.50:9187']
-  metrics_path: /metrics
-  relabel_configs:
-    - source_labels: [__address__]
-      target_label: instance
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['10.1.198.50:9187']  # No leading space
+    metrics_path: /metrics
 
 
