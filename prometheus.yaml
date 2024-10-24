@@ -108,7 +108,7 @@ scrape_configs:
 
   - job_name: 'postgresql'
     static_configs:
-      - targets: ['10.1.198.50:9187']  # No leading space
+      - targets: ['10.1.198.37:9187']  # No leading space
     metrics_path: /metrics
 
 
