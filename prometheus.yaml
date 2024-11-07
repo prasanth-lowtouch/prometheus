@@ -4,7 +4,7 @@ global:
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
   external_labels:
-    datacenter: primary
+    datacenter: prod
 
 # Alertmanager configuration
 alerting:
@@ -15,7 +15,7 @@ alerting:
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-   - /opt/bitnami/prometheus/conf/rules.yaml 
+   - /opt/bitnami/prometheus/conf/rules.yaml
    - /opt/bitnami/prometheus/conf/alerts.yaml
 
 # A scrape configuration containing exactly one endpoint to scrape:
@@ -27,7 +27,7 @@ scrape_configs:
     - targets: ['localhost:9090']
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['192.168.136.100:9100','10.0.2.3:9100','192.168.131.98:9100']
+    - targets: [ '192.168.131.98:9100', '192.168.149.106:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -57,11 +57,11 @@ scrape_configs:
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-      
+
   - job_name: 'mongodb_exporter'
     kubernetes_sd_configs:
     - role: endpoints
-    
+
     relabel_configs:
     - source_labels: [__meta_kubernetes_namespace]
       action: replace
@@ -72,19 +72,19 @@ scrape_configs:
 
     - source_labels: [pod]
       regex: '((.*)mongo(.*))'
-      action: keep   
+      action: keep
 
     - source_labels: [__address__]
       target_label: __address__
       regex: '([^:]+)(:[27017]+)?'
       replacement: '${1}'
       action: drop
-      
+
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
       replacement: 'AppZ${1}'
-      
+
   - job_name: 'axon-exporter'
     static_configs:
     - targets: ['axon-server-24-1.cloudorbit-prod:8000']
@@ -102,5 +102,3 @@ scrape_configs:
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-      
- 
