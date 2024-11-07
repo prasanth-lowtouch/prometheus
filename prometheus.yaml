@@ -42,10 +42,10 @@ scrape_configs:
         regex: 'k8s.worker.node.(.*)'
         target_label: nodename
         replacement: appz-${1}
-  - job_name: kube-state-metrics
+  - job_name: 'kube-state-metrics'
     static_configs:
     - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
-  - job_name: kubernetes-cadvisor
+  - job_name: 'kubernetes-cadvisor'
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
