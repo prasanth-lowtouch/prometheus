@@ -4,18 +4,11 @@ global:
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
   external_labels:
-    datacenter: primary
-
-# Alertmanager configuration
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets:
-       - alert-manager-0-2:9093
+    datacenter: PROD
 
 # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
 rule_files:
-   - /opt/bitnami/prometheus/conf/rules.yaml
+   - /opt/bitnami/prometheus/conf/rules.yaml 
    - /opt/bitnami/prometheus/conf/alerts.yaml
 
 # A scrape configuration containing exactly one endpoint to scrape:
@@ -27,7 +20,7 @@ scrape_configs:
     - targets: ['localhost:9090']
   - job_name: 'node-exporter'
     static_configs:
-    - targets: [ '192.168.131.98:9100', '192.168.149.106:9100']
+    - targets: ['192.168.131.98:9100','192.168.149.106:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -37,12 +30,11 @@ scrape_configs:
         regex: 'k8s.(.*)'
         target_label: nodename
         replacement: appz-${1}
-  - job_name: kube-state-metrics
+  - job_name: 'kube-state-metrics'
     static_configs:
     - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
 
-  - job_name: kubernetes-cadvisor
-
+  - job_name: 'kubernetes-cadvisor'
     scheme: https
     tls_config:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -58,11 +50,11 @@ scrape_configs:
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-
+      
   - job_name: 'mongodb_exporter'
     kubernetes_sd_configs:
     - role: endpoints
-
+    
     relabel_configs:
     - source_labels: [__meta_kubernetes_namespace]
       action: replace
@@ -73,15 +65,16 @@ scrape_configs:
 
     - source_labels: [pod]
       regex: '((.*)mongo(.*))'
-      action: keep
+      action: keep   
 
     - source_labels: [__address__]
       target_label: __address__
       regex: '([^:]+)(:[27017]+)?'
       replacement: '${1}'
       action: drop
-
+      
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
       replacement: 'AppZ${1}'
+  
