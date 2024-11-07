@@ -17,9 +17,22 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
 
+  # Federation block
+  - job_name: 'federation'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    scheme: https
+    metrics_path: /federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{job=~"kube-state-metrics|kubernetes-cadvisor|mongodb_exporter|node-exporter"}'
+    static_configs:
+      - targets :
+        - 'alpha-prod-prometheus-2-45.acebaef3.lowtouch.cloud:443'
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['10.0.2.3:9100','10.0.1.2:9100']
+    - targets: ['10.0.2.3:9100','10.0.1.2:9100','192.168.149.106:9100','192.168.131.98:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -38,41 +51,57 @@ scrape_configs:
       ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kubernetes_sd_configs:
-      - role: node
+    - role: node
     relabel_configs:
-      - action: labelmap
-        regex: __meta_kubernetes_node_label_(.+)
-      - target_label: __address__
-        replacement: kubernetes.default.svc:443
-      - source_labels:
-          - __meta_kubernetes_node_name
-        regex: (.+)
-        target_label: __metrics_path__
-        replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor 
-  - job_name: redis
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+  - job_name: 'redis'
     kubernetes_sd_configs:
-      - role: endpoints
+    - role: endpoints
     relabel_configs:
-      - source_labels:
-          - __meta_kubernetes_namespace
-        action: replace
-        target_label: namespace
-      - source_labels:
-          - __meta_kubernetes_pod_name
-        action: replace
-        target_label: pod
-      - source_labels:
-          - pod
-        regex: ((.*)redis(.*))
-        action: keep
-      - source_labels:
-          - __address__
-        target_label: __address__
-        regex: ([^:]+)(:[6379]+)?
-        replacement: ${1}
-        action: drop
-      - source_labels:
-          - __address__
-        regex: .*
-        target_label: instance
-        replacement: AppZ${1}
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: pod
+    - source_labels: [pod]
+      regex: redis.*
+      action: keep
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[6379]+)?'
+      replacement: '${1}'
+      action: drop
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'AppZ${1}'
+  - job_name: 'mongodb_exporter'
+    kubernetes_sd_configs:
+    - role: endpoints
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: pod
+    - source_labels: [pod]
+      regex: '((.*)mongo(.*))'
+      action: keep
+    - source_labels: [__address__]
+      target_label: __address__
+      regex: '([^:]+)(:[27017]+)?'
+      replacement: '${1}'
+      action: drop
+    - source_labels: [__address__]
+      regex: '.*'
+      target_label: instance
+      replacement: 'AppZ${1}'
