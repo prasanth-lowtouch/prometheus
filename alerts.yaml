@@ -1,5 +1,4 @@
 groups:
-
 - name: Cpu-usage
   rules:
   - alert: HostHighCpuLoad
@@ -10,7 +9,6 @@ groups:
     annotations:
       summary: Host high CPU load (instance {{ $labels.instance }})
       description: "CPU load is > 95%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-      
 - name: Disk-usage
   rules:
   - alert: 'Low data disk space'
@@ -22,40 +20,94 @@ groups:
       description: 'Partition : {{$labels.mountpoint}}'
       summary: "Disk usage is `{{humanize $value}}%`"
       host: "{{$labels.instance}}"
-
-
 - name: Memory-usage
   rules:
   - alert: HostOutOfMemory
-    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 8
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
     for: 10m
     labels:
       severity: warning
     annotations:
       summary: Host out of memory (instance {{ $labels.instance }})
-      description: "Node memory is filling up (< 8% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
-
+      description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 - name: Disk-usage-check
   rules:
   - alert: Host Out Of DiskSpace
-    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 15 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
     for: 5m
     labels:
       severity: warning
     annotations:
       title: "Low Disk space"
       summary: Host out of disk space (instance {{ $labels.instance }})
-      description: "Disk is getting full (< 10% left)\n  Available Space is only= {{ $value }} %\n  LABELS = {{ $labels }}"
+      description: "Disk is getting full (< 15% left)\n  Available Space is only= {{ $value }} %\n  LABELS = {{ $labels }}"
 
-     
+- name: High-Pod-CPU
+  rules:
+  - alert: HighPodCPU
+    expr: avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod,namespace  )  > 85
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: HighCpuUsage
+      description: "Pod cpu average value : {{ $value | printf \"%.2f\" }}"
+
 - name: CPU-load
   rules:
   - alert: HighNodeCPU
-    expr: node_load15 / count by (instance, job) (node_cpu_seconds_total{mode="idle"}) >=2
+    expr: rate(node_load15[5m])*100 > 60
     for : 5m
     labels:
       severity: warning
     annotations:
       summary: "High CPU load (instance {{ $labels.instance }})"
       description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-      
+
+- name: Pod-Scaling-Up
+  rules:
+  - alert: PodScaleUp
+    expr: |
+      ( kube_deployment_status_replicas_available{deployment!="", namespace!=""} - kube_deployment_status_replicas_available{deployment!="", namespace!=""} offset 5m) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Deployment scale up observed"
+      description: |
+        Observed scale up in deployment {{ $labels.deployment }}. Current Replica count is : {{ with printf "kube_deployment_status_replicas_available{deployment='%s',namespace='%s'}" $labels.deployment $labels.namespace | query }} {{ . | first | value | humanize1024 }} {{ end }}
+
+- name: High-Pod-Memory
+  rules:
+  - alert: PodMemoryHigh
+    expr: sum(container_memory_usage_bytes{image!="", pod=~".*"}) by (namespace, pod) / sum(kube_pod_container_resource_limits_memory_bytes{}) by (namespace, pod) * 100 > 150
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      summary: HighPodMemoryUsage
+      description: "Pod Memory usage exceeds 70% for pod {{$labels.pod}} under {{$labels.namespace}} namespace"
+
+- name: Pod-Scaling-Down
+  rules:
+  - alert: PodScaleDown
+    expr: |
+      ( kube_deployment_status_replicas_available{deployment!="", namespace!=""} - kube_deployment_status_replicas_available{deployment!="", namespace!=""} offset 5m ) < 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Deployment scale down observed"
+      description: |
+        Observed scale down in deployment {{ $labels.deployment }}. Current Replica count is : {{ with printf "kube_deployment_status_replicas_available{deployment='%s',namespace='%s'}" $labels.deployment $labels.namespace | query }} {{ . | first | value | humanize1024 }} {{ end }}
+
+- name: High-CPU-Pods
+  rules:
+  - alert: HighCPU-Usage-Pods
+    expr: rate(container_cpu_usage_seconds_total{namespace="", pod=~"", container=~""}[5m]) / on(namespace, pod) kube_pod_container_resource_limits_cpu_cores{namespace="", pod=~"", container=~""} * 100 > 150
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High CPU usage on {{ $labels.pod }} pod in {{ $labels.namespace }}"
+      description: "CPU usage for {{ $labels.pod }} pod in namespace {{ $labels.namespace }} is 150% for less than 1 minute\n  VALUE = {{ $value | printf \"%.2f\" }}%\n  LABELS = {{ $labels }}"
