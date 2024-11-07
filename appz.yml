@@ -4,7 +4,7 @@ app:
     notify: aramanan@ecloudcontrol.com
 
 build:
-    version: 2.17
+    version: 2.45
     env: PROD
     build_file: none
     output_files: output/*.zip
