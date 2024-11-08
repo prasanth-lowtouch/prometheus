@@ -26,7 +26,7 @@ scrape_configs:
     honor_labels: true
     params:
       match[]:
-        - '{job=~"kube-state-metrics|kubernetes-cadvisor|mongodb_exporter|node-exporter"}'
+        - '{job=~"kube-state-metrics|kubernetes-cadvisor|mongodb_exporter|node-exporter|axonserver"}'
     static_configs:
       - targets :
         - 'alpha-prod-prometheus-2-45.acebaef3.lowtouch.cloud:443'
