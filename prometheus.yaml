@@ -79,5 +79,5 @@ scrape_configs:
       replacement: 'AppZ${1}'
   - job_name: 'axonserver'
     static_configs:
-    - targets: ['axon-server-24-1.cloudorbit-prod:8024']
+    - targets: ['axon-server-24-01.cloudorbit-prod:8024']
     metrics_path: '/actuator/prometheus'
