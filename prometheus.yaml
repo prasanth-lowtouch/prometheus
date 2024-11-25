@@ -81,3 +81,8 @@ scrape_configs:
     static_configs:
     - targets: ['axon-server-24-01.cloudorbit-prod:8024']
     metrics_path: '/actuator/prometheus'
+  
+  - job_name: 'axonserver_custom'
+    static_configs:
+    - targets: ['axon-server-24-01.cloudorbit-prod:8000']
+    metrics_path: '/actuator/prometheus/metrics'  
