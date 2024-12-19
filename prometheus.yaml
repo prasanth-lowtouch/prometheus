@@ -26,11 +26,11 @@ scrape_configs:
           - '172.31.62.118:9100'
     metric_relabel_configs:
       - source_labels: ['nodename']
-        regex: '(qa.master)'
+        regex: '(tst.qa.master)'
         target_label: nodename
         replacement: appz-${1}
       - source_labels: ['nodename']
-        regex: 'qa.worker.node.(.*)'
+        regex: 'tst.qa.worker.node.(.*)'
         target_label: nodename
         replacement: appz-${1}
 
