@@ -19,21 +19,11 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'graylog'
-    static_configs:
-      - targets: ['10.152.183.166:9833']
-
-  - job_name: 'opensearch'
-    static_configs:
-      - targets: ['10.152.183.91:9200']
-    metrics_path: '/_prometheus/metrics'
-
   - job_name: 'node-exporter'
     static_configs:
       - targets:
-          - '10.0.8.68:9100'
-          - '10.0.137.203:9100'
-          - '10.0.141.234:9100'
+          - '172.31.20.210:9100'
+          - '172.31.62.118:9100'
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
@@ -108,11 +98,6 @@ scrape_configs:
         regex: .*
         target_label: instance
         replacement: AppZ${1}
-
-  - job_name: 'postgresql'
-    static_configs:
-      - targets: ['10.152.183.153:9187']
-    metrics_path: /metrics
 
 
 
