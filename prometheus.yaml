@@ -31,9 +31,9 @@ scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
       - targets:
-          - '10.0.8.68:9100'
-          - '10.0.137.203:9100'
-          - '10.0.141.234:9100'
+          - '10.0.9.242:9100'
+          - '10.0.138.247:9100'
+          - '10.0.136.251:9100'
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
