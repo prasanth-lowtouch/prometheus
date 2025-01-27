@@ -34,6 +34,7 @@ scrape_configs:
           - '10.0.9.242:9100'
           - '10.0.138.247:9100'
           - '10.0.136.251:9100'
+          - '10.0.138.152:9100'
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(qa.master)'
