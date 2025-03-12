@@ -8,7 +8,7 @@ build:
     env: DEV
     build_file: none
     output_files: output/*.zip
-    image_template: prometheus-2.45
+    image_template: prometheus-3.0
 
 deploy:
     context: alpha/DEV
