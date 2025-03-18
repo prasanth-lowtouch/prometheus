@@ -70,10 +70,16 @@ scrape_configs:
   - job_name: 'blackbox'
     metrics_path: /probe
     params:
-      module: [http_2xx]
+     module: [http_2xx] 
     static_configs:
-      - targets:
-          - https://sranjan1995-dev-graylog-5-2.1276c99e.lowtouch.cloud
+    - targets:
+       - https://app.apexaiq.com/api/v1/health/ping/
+       - https://eu.apexaiq.com/api/v1/health/ping/
+       - https://az.apexaiq.com/api/v1/health/ping/
+       - https://docs.apexaiq.com/
+       - https://az-staging.apexaiq.com/api/v1/health/ping/
+       - https://www.lowtouch.ai/
+       
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
