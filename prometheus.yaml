@@ -73,11 +73,10 @@ scrape_configs:
      module: [http_2xx] 
     static_configs:
     - targets:
-       - https://app.apexaiq.com/api/v1/health/ping/
-       - https://eu.apexaiq.com/api/v1/health/ping/
-       - https://az.apexaiq.com/api/v1/health/ping/
-       - https://docs.apexaiq.com/
-       - https://az-staging.apexaiq.com/api/v1/health/ping/
+       - https://website-test.lowtouchcloud.io/
+       - https://ecloudcontrol.com/
+       - https://project.ecloudcontrol.com/
+       - https://tracker.ecloudcontrol.com/
        - https://www.lowtouch.ai/
        
     relabel_configs:
