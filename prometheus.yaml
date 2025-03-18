@@ -120,6 +120,7 @@ scrape_configs:
     static_configs:
       - targets: ['10.152.183.153:9187']
     metrics_path: /metrics
+    
 
 
 
