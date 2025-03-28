@@ -78,14 +78,13 @@ scrape_configs:
        - https://project.ecloudcontrol.com/
        - https://tracker.ecloudcontrol.com/
        - https://www.lowtouch.ai/
-       
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: blackbox-exporter-0-2:9115 
+        replacement: blackbox-exporter-0-2:9115
 
   - job_name: 'redis'
     kubernetes_sd_configs:
@@ -119,14 +118,18 @@ scrape_configs:
     static_configs:
       - targets: ['10.152.183.153:9187']
     metrics_path: /metrics
-    
-  - job_name: 'postgres'
 
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+      - role: node
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
 
+  - job_name: 'backup_metrics'
     static_configs:
-    - targets: ['postgres-master-13-3:8006']
-
-
-
+      - targets: ['10.152.183.29:8006']  # Replace with your node_exporter host:port
