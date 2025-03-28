@@ -132,4 +132,4 @@ scrape_configs:
 
   - job_name: 'backup_metrics'
     static_configs:
-      - targets: ['10.152.183.29:8006']  # Replace with your node_exporter host:port
+      - targets: ['postgres-master-13-3:8006']  # Replace with your node_exporter host:port
