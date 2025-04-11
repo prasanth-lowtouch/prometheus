@@ -2,13 +2,13 @@ app:
     name: prometheus
     code: prometheus
     notify: srswain@ecloudcontrol.com
-    
+   
 build:
-    version: 2.17
+    version: 3.0
     env: DEV
     build_file: none
     output_files: output/*.zip
-    image_template: prometheus-2.17
+    image_template: prometheus-3.0
 
 deploy:
     context: alpha/DEV
@@ -21,9 +21,7 @@ volumes:
   - claim: prometheus-data
     mount: /appz/data
     name: data
-    size: 50Gi
-    
-    
-  
+    size: 50Gi 
+
 properties:
-    revision : 105
+    revision : 0
