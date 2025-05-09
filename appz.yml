@@ -1,7 +1,7 @@
 app:
     name: prometheus
     code: prometheus
-    notify: appzdev@cloudbourne.com
+    notify: njose@ecloudcontrol.com
 
 build:
     version: 3.0
@@ -26,4 +26,4 @@ volumes:
     
   
 properties:
-    revision : 99
+    revision : 1
