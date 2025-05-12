@@ -11,7 +11,7 @@ build:
     image_template: prometheus-3.0
 
 deploy:
-    context: alpha/DEV
+    context: alpha/POC
     type: statefulset
     replicas: 1
     port:
@@ -26,4 +26,4 @@ volumes:
     
   
 properties:
-    revision: 2
+    revision: 1
