@@ -61,7 +61,7 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: 'AppZ${1}'    
+      replacement: 'poc${1}'    
       
   - job_name: 'rabbitmq_exporter'
    
@@ -97,7 +97,7 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: 'Appz${1}'
+      replacement: 'poc${1}'
           
   - job_name: 'nodejs'
    
@@ -138,4 +138,4 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: 'Appz${1}' 
+      replacement: 'poc${1}' 
