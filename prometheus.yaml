@@ -1,6 +1,8 @@
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  external_labels:
+    datacenter: primary
 
 alerting:
   alertmanagers:
@@ -16,19 +18,45 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
     - targets: ['localhost:9090']
+    
+  - job_name: 'federation'
+    scrape_interval: 20s
+    scrape_timeout: 20s
+    scheme: https
+    metrics_path: /federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
+    static_configs:
+      - targets : 
+        - 'jw-poc-prometheus.lowtouchcloud.io:443'
   
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['10.0.2.2:9100', '10.0.1.2:9100']
+    - targets: ['10.0.2.2:9100', '10.0.1.2:9100', '192.168.151.133:9100', '192.168.143.49:9100', '192.168.151.120:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
         target_label: nodename
-        replacement: appz-${1}
+        replacement: cloudorbit-${1}
       - source_labels: ['nodename']
-        regex: 'k8s.worker.node.(.*)'
+        regex: 'k8s.(.*)'
         target_label: nodename
-        replacement: appz-dev-worker-${1}
+        replacement: cloudorbit-${1}
+      - source_labels: ['nodename']
+        regex: 'lke413625-623632-02a8362a0000'
+        target_label: nodename
+        replacement: poc-worker-1
+      - source_labels: ['nodename']
+        regex: 'lke413625-623632-53c0ec030000'
+        target_label: nodename
+        replacement: poc-worker-2 
+      - source_labels: ['nodename']
+        regex: 'lke413625-623632-592a18840000'
+        target_label: nodename
+        replacement: poc-worker-3
+
   
   - job_name: 'kube-state-metrics'
     static_configs:
