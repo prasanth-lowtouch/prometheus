@@ -30,11 +30,11 @@ scrape_configs:
         - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
     static_configs:
       - targets : 
-        - 'jw-poc-prometheus.lowtouchcloud.io:443'
+        - 'mm-poc-prometheus.lowtouchcloud.io:443'
   
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['10.0.2.2:9100', '10.0.1.2:9100', '172.236.205.176:9100', '172.236.220.225:9100', '172.236.205.174:9100']
+    - targets: ['10.0.1.2:9100', '10.0.2.2:9100', '192.168.148.48:9100', '192.168.132.65:9100', '192.168.195.31:9100', '192.168.196.206:9100', '192.168.195.98:9100']
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -45,17 +45,25 @@ scrape_configs:
         target_label: nodename
         replacement: cloudorbit-${1}
       - source_labels: ['nodename']
-        regex: 'lke413625-623632-02a8362a0000'
+        regex: 'lke415125-625416-0dea598d0000'
         target_label: nodename
         replacement: poc-worker-1
       - source_labels: ['nodename']
-        regex: 'lke413625-623632-53c0ec030000'
+        regex: 'lke415125-625416-3e159e4e0000'
         target_label: nodename
         replacement: poc-worker-2 
       - source_labels: ['nodename']
-        regex: 'lke413625-623632-592a18840000'
+        regex: 'lke415125-625416-43338bb50000'
         target_label: nodename
         replacement: poc-worker-3
+      - source_labels: ['nodename']
+        regex: 'lke415125-625416-3c0f0b4f0000'
+        target_label: nodename
+        replacement: poc-worker-4
+      - source_labels: ['nodename']
+        regex: 'lke415125-625416-29eb814d0000'
+        target_label: nodename
+        replacement: poc-worker-5
 
   
   - job_name: 'kube-state-metrics'
