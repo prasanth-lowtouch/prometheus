@@ -34,7 +34,7 @@ scrape_configs:
   
   - job_name: 'node-exporter'
     static_configs:
-    - targets: ['10.0.1.2:9100', '10.0.2.2:9100', '192.168.148.48:9100', '192.168.132.65:9100', '192.168.195.31:9100', '192.168.196.206:9100', '192.168.195.98:9100']
+    - targets: ['10.0.2.2:9100', '10.0.1.2:9100', '23.239.11.221:9100', '45.56.110.158:9100', '23.92.22.28:9100', '50.116.54.235:9100', '45.56.110.157:9100', '172.104.9.7:9100', '172.104.9.43:9100', '172.104.9.9:9100', '66.175.214.162:9100', '45.79.185.151:9100', '198.74.57.170:9100', '45.33.83.95:9100' ]
     metric_relabel_configs:
       - source_labels: ['nodename']
         regex: '(engine.master)'
@@ -64,6 +64,34 @@ scrape_configs:
         regex: 'lke415125-625416-29eb814d0000'
         target_label: nodename
         replacement: poc-worker-5
+      - source_labels: ['nodename']
+        regex: 'lke415125-633537-22395f250000'
+        target_label: nodename
+        replacement: poc-worker-6
+      - source_labels: ['nodename']
+        regex: 'lke415125-633537-4aa6830d0000'
+        target_label: nodename
+        replacement: poc-worker-7
+      - source_labels: ['nodename']
+        regex: 'lke415125-633537-5e3bd6120000'
+        target_label: nodename
+        replacement: poc-worker-8
+      - source_labels: ['nodename']
+        regex: 'lke415125-650491-02f85d070000'
+        target_label: nodename
+        replacement: poc-worker-9
+      - source_labels: ['nodename']
+        regex: 'lke415125-650491-0cdc53a00000'
+        target_label: nodename
+        replacement: poc-worker-10
+      - source_labels: ['nodename']
+        regex: 'lke415125-650491-124a48e20000'
+        target_label: nodename
+        replacement: poc-worker-11
+      - source_labels: ['nodename']
+        regex: 'lke415125-650491-45b4ea2c0000'
+        target_label: nodename
+        replacement: poc-worker-12
 
   
   - job_name: 'kube-state-metrics'
