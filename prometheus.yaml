@@ -49,19 +49,19 @@ scrape_configs:
         target_label: nodename
         replacement: poc-worker-1
       - source_labels: ['nodename']
-        regex: 'lke415125-625416-3e159e4e0000'
+        regex: 'lke415125-625416-29eb814d0000'
         target_label: nodename
-        replacement: poc-worker-2 
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-43338bb50000'
-        target_label: nodename
-        replacement: poc-worker-3
+        replacement: poc-worker-2
       - source_labels: ['nodename']
         regex: 'lke415125-625416-3c0f0b4f0000'
         target_label: nodename
+        replacement: poc-worker-3
+      - source_labels: ['nodename']
+        regex: 'lke415125-625416-3e159e4e0000'
+        target_label: nodename
         replacement: poc-worker-4
       - source_labels: ['nodename']
-        regex: 'lke415125-625416-29eb814d0000'
+        regex: 'lke415125-625416-43338bb50000'
         target_label: nodename
         replacement: poc-worker-5
       - source_labels: ['nodename']
