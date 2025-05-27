@@ -19,18 +19,18 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
     
-  #- job_name: 'federation'
-    #scrape_interval: 20s
-    #scrape_timeout: 20s
-    #scheme: https
-    #metrics_path: /federate
-    #honor_labels: true
-    #params:
-      #match[]:
-        #- '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
-    #static_configs:
-      #- targets : 
-        #- 'alpha-poc-prometheus-3-0.lowtouchcloud.io:443'
+  - job_name: 'federation'
+    scrape_interval: 20s
+    scrape_timeout: 20s
+    scheme: https
+    metrics_path: /federate
+    honor_labels: true
+    params:
+      match[]:
+        - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
+    static_configs:
+      - targets : 
+        - 'alpha-poc-prometheus-3-0.lowtouchcloud.io:443'
   
   - job_name: 'node-exporter'
     static_configs:
