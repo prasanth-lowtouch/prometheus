@@ -30,7 +30,7 @@ scrape_configs:
         - '{job=~"kube-state-metrics|kubernetes-cadvisor|nodejs|rabbitmq_exporter|redis"}'
     static_configs:
       - targets : 
-        - 'alpha-poc-prometheus-3-0.lowtouchcloud.io:443'
+        - 'mm-poc-prometheus.lowtouchcloud.io:443'
   
   - job_name: 'node-exporter'
     static_configs:
