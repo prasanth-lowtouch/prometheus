@@ -13,59 +13,6 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
     - targets: ['localhost:9090']
-    
-  - job_name: 'node-exporter'
-    static_configs:
-    - targets: ['23.239.11.221:9100', '45.56.110.158:9100', '23.92.22.28:9100', '50.116.54.235:9100', '45.56.110.157:9100', '172.104.9.7:9100', '172.104.9.43:9100', '172.104.9.9:9100', '66.175.214.162:9100', '45.79.185.151:9100', '198.74.57.170:9100', '45.33.83.95:9100' ]
-    metric_relabel_configs:
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-0dea598d0000'
-        target_label: nodename
-        replacement: poc-worker-1
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-29eb814d0000'
-        target_label: nodename
-        replacement: poc-worker-2
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-3c0f0b4f0000'
-        target_label: nodename
-        replacement: poc-worker-3
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-3e159e4e0000'
-        target_label: nodename
-        replacement: poc-worker-4
-      - source_labels: ['nodename']
-        regex: 'lke415125-625416-43338bb50000'
-        target_label: nodename
-        replacement: poc-worker-5
-      - source_labels: ['nodename']
-        regex: 'lke415125-633537-22395f250000'
-        target_label: nodename
-        replacement: poc-worker-6
-      - source_labels: ['nodename']
-        regex: 'lke415125-633537-4aa6830d0000'
-        target_label: nodename
-        replacement: poc-worker-7
-      - source_labels: ['nodename']
-        regex: 'lke415125-633537-5e3bd6120000'
-        target_label: nodename
-        replacement: poc-worker-8
-      - source_labels: ['nodename']
-        regex: 'lke415125-650491-02f85d070000'
-        target_label: nodename
-        replacement: poc-worker-9
-      - source_labels: ['nodename']
-        regex: 'lke415125-650491-0cdc53a00000'
-        target_label: nodename
-        replacement: poc-worker-10
-      - source_labels: ['nodename']
-        regex: 'lke415125-650491-124a48e20000'
-        target_label: nodename
-        replacement: poc-worker-11
-      - source_labels: ['nodename']
-        regex: 'lke415125-650491-45b4ea2c0000'
-        target_label: nodename
-        replacement: poc-worker-12
 
   - job_name: 'kube-state-metrics'
     static_configs:
@@ -191,4 +138,4 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: 'poc${1}' 
+      replacement: 'poc${1}'
