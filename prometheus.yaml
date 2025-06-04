@@ -100,7 +100,7 @@ scrape_configs:
         regex: 'lke415125-650491-588641760000'
         target_label: nodename
         replacement: poc-worker-14
-        - source_labels: ['nodename']
+      - source_labels: ['nodename']
         regex: 'lke415125-672554-3ff250430000'
         target_label: nodename
         replacement: poc-worker-15
