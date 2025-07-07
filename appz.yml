@@ -24,4 +24,4 @@ volumes:
     size: 50Gi
     matchLabels: false
 properties:
-    revision: 00
+    revision: 01
