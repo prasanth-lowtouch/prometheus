@@ -57,7 +57,7 @@ scrape_configs:
      module: [http_2xx] 
     static_configs:
     - targets:
-       - https://172.20.22.64:3306
+       - http://172.20.22.64:3306
 
        
     relabel_configs:
