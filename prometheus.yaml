@@ -54,12 +54,10 @@ scrape_configs:
   - job_name: 'blackbox'
     metrics_path: /probe
     params:
-     module: [http_2xx] 
+     module: [tcp_connect] 
     static_configs:
     - targets:
-       - 172.20.22.64:3306
-
-       
+       - 172.20.22.64:3306       
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
