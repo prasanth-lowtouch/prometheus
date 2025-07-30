@@ -1,90 +1,100 @@
 groups:
-  - name: Cpu-usage
-    rules:
-      - alert: HostHighCpuLoad
-        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 90
-        for: 3m
-        labels:
-          severity: warning
-        annotations:
-          summary: Host high CPU load (instance {{ $labels.instance }})
-          description: "CPU load is > 95%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - name: Disk-usage
-    rules:
-      - alert: 'Low data disk space'
-        expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 95
-        labels:
-          severity: 'critical'
-        annotations:
-          title: "Disk Usage"
-          description: 'Partition : {{$labels.mountpoint}}'
-          summary: "Disk usage is `{{humanize $value}}%`"
-          host: "{{$labels.instance}}"
+- name: Cpu-usage
+  rules:
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 90
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host high CPU load (instance {{ $labels.instance }})
+      description: "CPU load is > 95%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      
+- name: Disk-usage
+  rules:
+  - alert: 'Low data disk space'
+    expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 90
+    labels:
+      severity: 'critical'
+    annotations:
+      title: "Disk Usage"
+      description: 'Partition : {{$labels.mountpoint}}'
+      summary: "Disk usage is `{{humanize $value}}%`"
+      host: "{{$labels.instance}}"
 
-  - name: Memory-usage
-    rules:
-      - alert: HostOutOfMemory
-        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 8
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          summary: Host out of memory (instance {{ $labels.instance }})
-          description: "Node memory is filling up (< 8% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - name: Disk-usage-check
-    rules:
-      - alert: Host Out Of DiskSpace
-        expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          title: "Low Disk space"
-          summary: Host out of disk space (instance {{ $labels.instance }})
-          description: "Disk is getting full (< 10% left)\n  Available Space is only= {{ $value }} %\n  LABELS = {{ $labels }}"
+- name: Memory-usage
+  rules:
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 8
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: Host out of memory (instance {{ $labels.instance }})
+      description: "Node memory is filling up (< 8% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-  - name: CPU-load
-    rules:
-      - alert: HighNodeCPU
-        expr: node_load15 / count by (instance, job) (node_cpu_seconds_total{mode="idle"}) >= 2
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High CPU load (instance {{ $labels.instance }})"
-          description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+- name: Disk-usage-check
+  rules:
+  - alert: Host Out Of DiskSpace
+    expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      title: "Low Disk space"
+      summary: Host out of disk space (instance {{ $labels.instance }})
+      description: "Disk is getting full (< 10% left)\n  Available Space is only= {{ $value }} %\n  LABELS = {{ $labels }}"
 
-  - name: site-down
-    rules:
-      - alert: SiteDown
-        expr: probe_success == 0
-        for: 5m
-        labels:
-          severity: "critical"
-        annotations:
-          summary: "Site {{ $labels.instance }} down"
-          description: "HTTP probe fail"
+     
+- name: CPU-load
+  rules:
+  - alert: HighNodeCPU
+    expr: rate(node_load15[5m])*100 > 85
+    for : 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU load (instance {{ $labels.instance }})"
+      description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+      
+      
+- name: High-Pod-CPU
+  rules:
+  - alert: HighPodCPU
+    expr: |
+      avg(rate(container_cpu_usage_seconds_total{namespace!="",image!="",container_name!="POD"}[5m])*100) by (pod, namespace) > on(pod) group_left(app_name) 90 unless on(pod) group_right(app_name) 150
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: HighCpuUsage
+      description: |
+        {{- if eq .app_name "eol-vectorization-3-3" -}}
+        "eol-vectorization-3-3 pod CPU usage is high: {{ $value | printf \"%.2f\" }}"
+        {{- else -}}
+        "CPU usage is high for {{ .pod }} in {{ .namespace }}: {{ $value | printf \"%.2f\" }}"
+        {{- end -}}
+      
+- name: site-down
+  rules:
+  - alert: SiteDown
+    expr: probe_success == 0
+    for: 5m
+    labels:
+      severity: "critical"
+    annotations:
+      summary: "Site {{ $labels.instance }} down"
+      description: "HTTP probe fail"
 
-  - name: status-other-than-200
-    rules:
-      - alert: http-200-fail
-        expr: probe_http_status_code != 200
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "HTTP 200 Fail"
-          description: "HTTP status code other than \"200\" has been returned\n HTTP STATUS {{ $value }}"
-
-  - name: mysql-down
-    rules:
-      - alert: MySQLPortDown
-        expr: probe_success == 0 and on(instance) instance =~ ".*:3306$"
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "MySQL instance down - {{ $labels.instance }}"
-          description: "Blackbox TCP probe failed for MySQL port 3306 on {{ $labels.instance }}"
+- name: status-other-than-200
+  rules:
+  - alert: http-200-fail
+    expr: probe_http_status_code != 200
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "HTTP 200 Fail"
+      description: "HTTP status code other than \"200\" has been returned\n HTTP STATUS {{ $value }}"
