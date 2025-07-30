@@ -58,4 +58,17 @@ groups:
     annotations:
       summary: "High CPU load (instance {{ $labels.instance }})"
       description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+- name: mysql-down
+  rules:
+  - alert: MySQLPortDown
+    expr: probe_success == 0 and on (instance) probe_target =~ ".*:3306$"
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MySQL instance down - {{ $labels.instance }}"
+      description: "Blackbox TCP probe failed for MySQL port 3306 on {{ $labels.instance }}"
+
+
       
