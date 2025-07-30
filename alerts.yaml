@@ -3,8 +3,8 @@ groups:
 - name: Cpu-usage
   rules:
   - alert: HostHighCpuLoad
-    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 1
-    for: 1m
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 85
+    for: 3m
     labels:
       severity: warning
     annotations:
@@ -28,7 +28,7 @@ groups:
   rules:
   - alert: HostOutOfMemory
     expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 8
-    for: 1m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -51,11 +51,10 @@ groups:
 - name: CPU-load
   rules:
   - alert: HighNodeCPU
-    expr: rate(node_load15[5m])*100 > 1
-    for : 1m
+    expr: rate(node_load15[5m])*100 > 80
+    for : 5m
     labels:
       severity: warning
     annotations:
       summary: "High CPU load (instance {{ $labels.instance }})"
       description: "CPU load is high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
-      
