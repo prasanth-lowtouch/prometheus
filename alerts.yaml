@@ -61,12 +61,12 @@ groups:
   rules:
     - alert: SiteDown
       expr: probe_success == 0
-      for: 5m
+      for: 1m
       labels:
         severity: "critical"
       annotations:
         summary: "Site {{ $labels.instance }} down"
-        description: "HTTP probe fail"
+        description: "Blackbox TCP probe failed for MySQL port 3306 on {{ $labels.instance }}"
 
 - name: status-other-than-200
   rules:
