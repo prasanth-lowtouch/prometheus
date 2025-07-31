@@ -57,13 +57,14 @@ scrape_configs:
      module: [tcp_connect] 
     static_configs:
     - targets:
-       - 172.20.22.64:3306       
+       - 172.20.22.64:3306
+       
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: blackbox-exporter-0-2:9115  
+        replacement: blackbox-exporter-0-2:9115     
       
       
