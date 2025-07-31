@@ -61,7 +61,7 @@ groups:
   rules:
     - alert: SiteDown
       expr: probe_success == 0
-      for: 1m
+      for: 10s
       labels:
         severity: "critical"
       annotations:
@@ -72,7 +72,7 @@ groups:
   rules:
     - alert: http-200-fail
       expr: probe_http_status_code != 200
-      for: 5m
+      for: 10s
       labels:
         severity: critical
       annotations:
@@ -83,7 +83,7 @@ groups:
   rules:
     - alert: MySQLPortDown
       expr: probe_http_status_code{instance=~"mysql-.*"} == 0
-      for: 1m
+      for: 10s
       labels:
         severity: critical
       annotations:
