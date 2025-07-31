@@ -51,7 +51,7 @@ scrape_configs:
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
 
-  - job_name: 'blackbox'
+  - job_name: 'blackbox-mysql'
     metrics_path: /probe
     params:
      module: [tcp_connect] 
