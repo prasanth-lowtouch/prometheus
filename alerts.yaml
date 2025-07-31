@@ -82,7 +82,7 @@ groups:
 - name: mysql-down
   rules:
     - alert: MySQLPortDown
-      expr: probe_success == 0 and on(instance) instance =~ ".*:3306$"
+      expr: probe_http_status_code{instance=~"mysql-.*"} == 0
       for: 2m
       labels:
         severity: critical
