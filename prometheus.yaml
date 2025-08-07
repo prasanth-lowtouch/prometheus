@@ -68,5 +68,4 @@ scrape_configs:
         replacement: blackbox-exporter-0-2:9115
 
     
-      
-      
+    
