@@ -57,7 +57,7 @@ scrape_configs:
      module: [tcp_connect] 
     static_configs:
     - targets:
-       - 172.20.22.64:3306
+       - 172.20.22.6:3306
        
     relabel_configs:
       - source_labels: [__address__]
