@@ -51,13 +51,13 @@ scrape_configs:
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       
-  - job_name: 'blackbox'
+  - job_name: 'app_db_health'
+    scrape_interval: 15s
     metrics_path: /probe
     params:
-     module: [tcp_connect] 
+      module: [http_2xx]
     static_configs:
-    - targets:
-       - 192.168.176.48:31192
+      - targets: ['mysql-healthcheck-3-11:5000/health/db']
        
     relabel_configs:
       - source_labels: [__address__]
@@ -65,5 +65,5 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: blackbox-exporter-0-2:9115 
+        replacement: blackbox-exporter-0-2:9115
       
