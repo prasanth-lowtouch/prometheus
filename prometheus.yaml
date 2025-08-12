@@ -51,7 +51,7 @@ scrape_configs:
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
       
-  - job_name: 'test-app_db_health'
+  - job_name: 'app_db_health'
     scrape_interval: 15s
     metrics_path: /probe
     params:
