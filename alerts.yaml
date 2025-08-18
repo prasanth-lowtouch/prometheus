@@ -51,7 +51,7 @@ groups:
 - name: CPU-load
   rules:
   - alert: HighNodeCPU
-    expr: rate(node_load15[5m])*100 > 80
+    expr: rate(node_load15[5m])*100 > 1
     for : 5m
     labels:
       severity: warning
