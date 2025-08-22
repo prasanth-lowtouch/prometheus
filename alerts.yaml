@@ -3,7 +3,7 @@ groups:
 - name: system-health
   rules:
     - alert: HostHighCpuLoad
-      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 90
+      expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 0
       for: 3m
       labels:
         severity: warning
@@ -12,7 +12,7 @@ groups:
         description: "CPU load > 90%\nVALUE = {{ $value }}"
 
     - alert: LowDataDiskSpace
-      expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 95
+      expr: ceil(((node_filesystem_size_bytes{mountpoint!="/boot"} - node_filesystem_free_bytes{mountpoint!="/boot"}) / node_filesystem_size_bytes{mountpoint!="/boot"} * 100)) > 0
       labels:
         severity: critical
       annotations:
@@ -20,7 +20,7 @@ groups:
         description: "Partition: {{ $labels.mountpoint }}, Usage: {{ humanize $value }}%"
 
     - alert: HostOutOfMemory
-      expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 8
+      expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 0
       for: 10m
       labels:
         severity: warning
