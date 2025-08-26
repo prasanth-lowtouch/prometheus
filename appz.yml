@@ -1,7 +1,7 @@
 app:
     name: prometheus
     code: prometheus
-    notify: appzdev@cloudbourne.com
+    notify: prrajan@cloudbourne.com
 
 build:
     version: 2.17
@@ -11,7 +11,7 @@ build:
     image_template: prometheus-2.45
 
 deploy:
-    context: alpha/DEV
+    context: prasanth-lowtouch/DEV
     type: statefulset
     replicas: 1
     port:
