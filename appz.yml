@@ -4,11 +4,11 @@ app:
     notify: prrajan@cloudbourne.com
 
 build:
-    version: 2.17
+    version: 3.4
     env: DEV
     build_file: none
     output_files: output/*.zip
-    image_template: prometheus-3.0
+    image_template: prometheus-3.4
 
 deploy:
     context: prasanth-lowtouch/DEV
@@ -26,5 +26,5 @@ volumes:
     
   
 properties:
-    revision : 98
+    revision : 99
     
